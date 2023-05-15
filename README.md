@@ -4,6 +4,8 @@ How to solve the timeout and focus issue in iOS.
 
 The demo link: https://xcatliu.github.io/ios-timeout-focus/
 
+---
+
 In iOS, directly calling `input.focus()` works as normal.
 
 ```js
