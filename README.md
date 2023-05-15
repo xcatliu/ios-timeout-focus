@@ -10,6 +10,7 @@ In iOS, directly calling `input.focus()` works as normal.
 focusButton.addEventListener('click', () => {
     textInput.focus();
 });
+```
 
 However, calling focus inside a timeout cannot bring up the keyboard:
 
