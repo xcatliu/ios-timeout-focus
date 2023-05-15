@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        input, button {
+            font-size: 16px;
+        }
+        input:focus
+        {
+            border: 1px solid red;
+        }
+        p, pre {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h3>测试 Timeout 之后 focus 在 iOS 中的表现</h3>
+    <br>
+    <input id="text-input" type="text" />
+    <br>
+    <br>
+    <button id="focus">Focus</button>
+    <p>直接调用 focus 是正常的</p>
+    <pre><code>focusButton.addEventListener('click', () => {
+    textInput.focus();
+});</code></pre>
+    <br>
+    <br>
+    <button id="timeout-focus">Timeout and focus</button>
+    <p>在 iOS 中，在 timeout 里 focus 是无法唤起键盘的</p>
+    <pre><code>timeoutFocusButton.addEventListener('click', (e) => {
+    setTimeout(() => textInput.focus(), 16 );
+});</code></pre>
+    <br>
+    <br>
+    <button id="open-keyboard-timeout-focus">Open keyboard and timeout and focus</button>
+    <p>需要先调用 openIosKeyboard 唤起键盘，再调用 timeout 和其中的 focus，就可以保持键盘打开</p>
+    <pre><code>timeoutFocusButton.addEventListener('click', (e) => {
+    openIosKeyboard();
+    setTimeout(() => textInput.focus(), 10);
+});</code></pre>
+    <br>
+    <p><a href="https://stackoverflow.com/a/74851426/2777142">参考这个 stack overflow 回答</a></p>
+    <script>
+        const focusButton = document.getElementById('focus');
+        const timeoutFocusButton = document.getElementById('timeout-focus');
+        const openKeyboardTimeoutFocusButton = document.getElementById('open-keyboard-timeout-focus');
+        const textInput = document.getElementById('text-input');
+
+        focusButton.addEventListener('click', () => {
+            textInput.focus();
+        });
+        timeoutFocusButton.addEventListener('click', (e) => {
+            setTimeout(() => textInput.focus(), 10);
+        });
+        openKeyboardTimeoutFocusButton.addEventListener('click', (e) => {
+            openIosKeyboard();
+            setTimeout(() => textInput.focus(), 10);
+        });
+
+        /**
+         * iOS keyboard can only be opened by user interaction + focus event.
+         * There are situations in which we need to open keyboard programmatically
+         * before other elements are rendered, like when opening an overlay. this function can be used
+         * to open the keyboard before the overlay is rendered, and once the overlay is
+         * rendered, it's needed to focus to the desired input element, and the keyboard
+         * will stay open.
+         *
+         * This function needs to be called from native events attached to HTML elements. It will
+         * not work if called from a "passive" event, or after any event not coming from
+         * user interaction (onLoad, onFocus, etc).
+         *
+         * It's recommended to use it on MouseEvents or TouchEvents.
+         */
+        function openIosKeyboard() {
+            const input = document.createElement("input");
+            input.setAttribute("type", "text");
+            input.setAttribute("style", "position: fixed; top: -100px; left: -100px;");
+            document.body.appendChild(input);
+            input.focus();
+            // it's safe to remove the fake input after a 30s timeout
+            setTimeout(() => {
+                document.body.removeChild(input);
+            }, 30 * 1000);
+        }
+    </script>
+</body>
