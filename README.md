@@ -18,7 +18,7 @@ However, calling focus inside a timeout cannot bring up the keyboard:
 
 ```js
 timeoutFocusButton.addEventListener('click', (e) => {
-    setTimeout(() => textInput.focus(), 16 );
+    setTimeout(() => textInput.focus(), 16);
 });
 ```
 
@@ -27,7 +27,7 @@ You should call `openIosKeyboard` synchronously and then call timeout and focus 
 ```js
 timeoutFocusButton.addEventListener('click', (e) => {
     openIosKeyboard();
-    setTimeout(() => textInput.focus(), 10);
+    setTimeout(() => textInput.focus(), 16);
 });
 ```
 
